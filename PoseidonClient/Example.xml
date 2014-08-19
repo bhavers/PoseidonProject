@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Client id="1">
+	<Location type="Adress">
+		<Street>Hagbergstrasse 20</Street>
+		<City>70188 Stuttgart</City>
+		<Country>DE</Country>
+	</Location>
+	<Location type="LatLong">
+		<Lat>48.776882</Lat>
+		<Long>9.181484</Long>
+	</Location>
+	<Sensor type="DHT">
+		<Value type="Humidity">
+			67
+		</Value>
+		<Value type="Temperature">
+			32
+		</Value>
+	</Sensor>
+	<Sensor type="AirQuality">
+		<Value>
+			100
+		</Value>
+	</Sensor>
+	<Sensor type="Sound">
+		<Value>
+			66
+		</Value>
+	</Sensor>
+</Client>
