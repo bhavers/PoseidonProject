@@ -13,9 +13,13 @@ import time
 
 sensorValues = dict()
 
+# Format:
+# sensorName = Pin
+# If not there set it to -1 to ignore it
 analogSensors = dict(
     light = 0,
     air = 1,
+    moisture = -1,
 )
 digitalSensors = dict(
 )
@@ -42,11 +46,16 @@ updateInterval = 15
 #Register all analog ensors at the GrovePI
 def initAnalogSensors():
     for sensor in analogSensors:
-        grovepi.pinMode(analogSensors[sensor],"Input")
+        pin = analogSensors[sensor]
+        if pin >= 0:
+            grovepi.pinMode(pin,"Input")
+
 #Read all analog sensors 
 def readAnalogSensors():
     for sensor in analogSensors:
-        sensorValues[sensor] = grovepi.analogRead(analogSensors[sensor])
+        pin = analogSensors[sensor]
+        if pin >= 0:
+            sensorValues[sensor] = grovepi.analogRead(pin)
 
 initAnalogSensors()
 
