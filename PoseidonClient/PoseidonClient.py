@@ -1,15 +1,13 @@
 import grovepi
-from mqtt import MqttClient
+import paho-mqtt
 import time
+import grove_barometer_lib
 
 
 #TODO:
 # Rewrite mqtt wrapper
 # Add functions for digital and I2C sensors 
 # Add JSON formatter for all values
-# Add Barometer to grovepi lib (Send Pull request to dexterInd)
-#
-#
 
 sensorValues = dict()
 
@@ -21,13 +19,10 @@ analogSensors = dict(
     air = 1,
     moisture = -1,
 )
-digitalSensors = dict(
-)
 
-I2CSensors = dict(
-)
+barometerSensor = grove_barometer_lib.barometer()
 
-mosquittoSettings = dict(
+mqttSettings = dict(
     server      = '127.0.0.1',
     port        = 12000,
     clientID    = 'TestClient',
@@ -43,6 +38,14 @@ location = dict(
 
 updateInterval = 15
 
+def readBarometerSensor():
+    if barometerSensor.isAvailable()
+        barometerSensor.update()
+        sensorValues["temperatur"] = (barometerSensor.temperature / 100.0)
+        sensorValues["pressure"] = (barometerSensor.pressure / 100.0)
+        sensorValues["altitude"] = (barometerSensor.altitude / 100.0)
+  
+
 #Register all analog ensors at the GrovePI
 def initAnalogSensors():
     for sensor in analogSensors:
@@ -57,11 +60,33 @@ def readAnalogSensors():
         if pin >= 0:
             sensorValues[sensor] = grovepi.analogRead(pin)
 
+
+## MQTT Callbacks
+def _on_connect(mosq, obj, rc):
+    if rc < 0:
+        print "Connection failed. RC: {}".format(rc)
+
+def _on_publish(mosq, obj, mid):
+    print "Message {} published.".format(mid)
+
+
+def intitMQTT():
+    mqttClient = mqtt.Client(mqttSettings["clientID"])
+
+    mqttClient.on_connect = self._on_connect
+    mqttClient.on_publish = self._on_publish
+
+    mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
+
+
+
+#intitMQTT()
 initAnalogSensors()
 
 #For now: Print all the analog sensor values
 while True:
     readAnalogSensors()
+    readBarometerSensor()
     print sensorValues
     time.sleep(2)
 
