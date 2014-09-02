@@ -1,13 +1,29 @@
 import grovepi
-import paho-mqtt
-import time
+import paho.mqtt.client as mqtt
+import time, datetime
+import json
 import grove_barometer_lib
+from sqliteClient import SQLiteClient
 
+##########################
+# Needed python libaries:#
+# sqllite                #
+# paho-mqtt              #
+##########################
+# Install with :         #
+# pip install <lib name> #
+##########################
+
+#############################
+# Variables to change :     #
+# - saveLocal               #
+# - location                #
+# - mqttSettings            #
+# - analogSensors           #
+#############################
 
 #TODO:
-# Rewrite mqtt wrapper
 # Add functions for digital and I2C sensors 
-# Add JSON formatter for all values
 
 sensorValues = dict()
 
@@ -15,33 +31,36 @@ sensorValues = dict()
 # sensorName = Pin
 # If not there set it to -1 to ignore it
 analogSensors = dict(
-    light = 0,
-    air = 1,
-    moisture = -1,
+    moisture = 0,
 )
 
-barometerSensor = grove_barometer_lib.barometer()
+#Switch between local storage and sending to the cloud
+saveLocal = True
 
+#Settings for the mqtt client
 mqttSettings = dict(
     server      = '127.0.0.1',
     port        = 12000,
     clientID    = 'TestClient',
     controlTopic    = 'yay/super/topic',
     publishTopic    = 'yay/geiles/topic',
-    qos         = 0,
 )
 
+# Location information for the GrovePi station
+# Possible display on a map?
 location = dict(
     lat         = 48.7833,
     long        = 9.1833,
 )
 
+# Interval in which values should be stored or send
 updateInterval = 15
 
+# Read the barometer values
 def readBarometerSensor():
-    if barometerSensor.isAvailable()
+    if barometerSensor.isAvailable():
         barometerSensor.update()
-        sensorValues["temperatur"] = (barometerSensor.temperature / 100.0)
+        sensorValues["temperature"] = (barometerSensor.temperature / 100.0)
         sensorValues["pressure"] = (barometerSensor.pressure / 100.0)
         sensorValues["altitude"] = (barometerSensor.altitude / 100.0)
   
@@ -60,34 +79,49 @@ def readAnalogSensors():
         if pin >= 0:
             sensorValues[sensor] = grovepi.analogRead(pin)
 
+#Read all sensor values
+def readSensors():
+    readAnalogSensors()
+    readBarometerSensor()
+    sensorValues['timestamp'] = datetime.datetime.utcnow().isoformat()
 
 ## MQTT Callbacks
-def _on_connect(mosq, obj, rc):
+def on_connect(client, userdata, flags, rc):
     if rc < 0:
         print "Connection failed. RC: {}".format(rc)
 
-def _on_publish(mosq, obj, mid):
+def on_publish(client, userdata, mid):
     print "Message {} published.".format(mid)
 
 
 def intitMQTT():
     mqttClient = mqtt.Client(mqttSettings["clientID"])
 
-    mqttClient.on_connect = self._on_connect
-    mqttClient.on_publish = self._on_publish
+    mqttClient.on_connect = _on_connect
+    mqttClient.on_publish = _on_publish
 
     mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
 
+#Init everything needed
+def init():
+    initAnalogSensors()
+    #Init barometer 
+    barometerSensor = grove_barometer_lib.barometer()
+    
+    if saveLocal == True:
+        sqliteClient = SQLiteClient()
+    else:
+        intitMQTT()
 
-
-#intitMQTT()
-initAnalogSensors()
-
-#For now: Print all the analog sensor values
+#For now:
+init()
 while True:
-    readAnalogSensors()
-    readBarometerSensor()
+    readSensors()
+    if SaveLocal == True :
+        sqliteClient.addValues(sensorValues)
+    else:
+        sensorValues.update(location)
+        mqttClient.publish(mqttSettings['publishTopic'], json.dumps(sensorValues))
+        mqttClient.loop()
     print sensorValues
-    time.sleep(2)
-
-
+    time.sleep(updateInterval * 60)
