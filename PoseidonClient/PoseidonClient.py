@@ -36,6 +36,7 @@ analogSensors = dict(
 
 #Switch between local storage and sending to the cloud
 saveLocal = True
+sendToCloud = False
 
 #Settings for the mqtt client
 mqttSettings = dict(
@@ -110,7 +111,7 @@ def init():
     
     if saveLocal == True:
         sqliteClient = SQLiteClient()
-    else:
+    if sendToCloud == True:
         intitMQTT()
 
 #For now:
@@ -119,7 +120,7 @@ while True:
     readSensors()
     if SaveLocal == True :
         sqliteClient.addValues(sensorValues)
-    else:
+    if sendToCloud == True:
         sensorValues.update(location)
         mqttClient.publish(mqttSettings['publishTopic'], json.dumps(sensorValues))
         mqttClient.loop()
