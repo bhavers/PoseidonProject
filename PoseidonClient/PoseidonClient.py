@@ -36,13 +36,13 @@ analogSensors = dict(
 )
 
 #Switch between local storage and sending to the cloud
-saveLocal = False
+saveLocal = True
 sendToCloud = True
 
 #Settings for the mqtt client
 mqttSettings = dict(
     #Change this to something that identifies your Client
-    clientID    = 'TestClient',
+    clientID    = 'TheGruSensor',
 
     #Don't change this
     server      = 'realtime.ngi.ibm.com',
@@ -59,7 +59,7 @@ location = dict(
 
 # Interval in which values should be stored or send
 # Don't set this under 30
-updateInterval = 30
+updateInterval = 60
 
 # Read the barometer values
 def readBarometerSensor():
@@ -92,7 +92,7 @@ def readSensors():
 
 ## MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
-    if rc < 0:
+    if rc > 0:
         print "Connection failed. RC: {}".format(rc)
     else:
         print "Connected successfully"
@@ -101,31 +101,25 @@ def on_publish(client, userdata, mid):
     print "Message {} published.".format(mid)
 
 
-def intitMQTT():
-    mqttClient = mqtt.Client(mqttSettings["clientID"])
+#For now:
+#Init the sensors
+initAnalogSensors()
+barometerSensor = grove_barometer_lib.barometer()
 
+if saveLocal == True:
+    sqliteClient = SQLiteClient()
+if sendToCloud == True:
+    mqttClient = mqtt.Client(mqttSettings["clientID"])
     mqttClient.on_connect = on_connect
     mqttClient.on_publish = on_publish
-
     mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
     mqttClient.loop()
+    time.sleep(15)
 
-#Init everything needed
-def init():
-    initAnalogSensors()
-    #Init barometer 
-    barometerSensor = grove_barometer_lib.barometer()
-    
-    if saveLocal == True:
-        sqliteClient = SQLiteClient()
-    if sendToCloud == True:
-        intitMQTT()
 
-#For now:
-init()
 while True:
     readSensors()
-    if SaveLocal == True :
+    if saveLocal == True :
         sqliteClient.addValues(sensorValues)
     if sendToCloud == True:
         sensorValues["clientID"] = mqttSettings["clientID"]
@@ -133,4 +127,5 @@ while True:
         mqttClient.publish(mqttSettings['publishTopic'], json.dumps(sensorValues))
         mqttClient.loop()
     print sensorValues
+    sensorValues = dict()
     time.sleep(updateInterval * 60)
