@@ -8,7 +8,7 @@
 # ------------------------------------------------
 # Author    Date      		Comments
 # Bill      26.07.2014   	Initial Port to Python
-# Guruth    29.08.2014      Clean up and put to usable library
+# Guruth    29.08.2014      Clean up and put to usable libary
 #
 # These files have been made available online through a Creative Commons Attribution-ShareAlike 3.0  license.
 # (http://creativecommons.org/licenses/by-sa/3.0/)
@@ -28,20 +28,18 @@ if rev == 2:
 else:
     bus = smbus.SMBus(0)
 
-HP20X_I2C_DEV_ID = 0x76     # Barometer device address
+HP20X_I2C_DEV_ID = 0x76  # Barometer device address
 
-HP20X_SOFT_RST = 0x06       # Soft reset the device
-OK_HP20X_DEV = 0X80         # Default value for
+HP20X_SOFT_RST = 0x06  # Soft reset the device
+OK_HP20X_DEV = 0X80  # Default value for
 
 HP20X_READ_PARA_REG = 0x8F  # Read Register
 
-HP20X_ADC_CVT = 0x48        # Digital filter rate and channel
+HP20X_ADC_CVT = 0x48  #
 
-HP20X_READ_P = 0x30         # Read Pressure
-HP20X_READ_A = 0x31         # Read Altitude
-HP20X_READ_T = 0x32         # Read Temperature
-
-
+HP20X_READ_P = 0x30  # Read Pressure
+HP20X_READ_A = 0x31  # Read Altitude
+HP20X_READ_T = 0x32  # Read Temperature
 
 
 class barometer:
