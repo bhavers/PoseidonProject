@@ -104,8 +104,8 @@ def on_publish(client, userdata, mid):
 def intitMQTT():
     mqttClient = mqtt.Client(mqttSettings["clientID"])
 
-    mqttClient.on_connect = _on_connect
-    mqttClient.on_publish = _on_publish
+    mqttClient.on_connect = on_connect
+    mqttClient.on_publish = on_publish
 
     mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
     mqttClient.loop()
