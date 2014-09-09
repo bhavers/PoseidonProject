@@ -17,6 +17,7 @@ from sqliteClient import SQLiteClient
 #############################
 # Variables to change :     #
 # - saveLocal               #
+# - sendToCloud             #
 # - location                #
 # - mqttSettings            #
 # - analogSensors           #
@@ -35,27 +36,30 @@ analogSensors = dict(
 )
 
 #Switch between local storage and sending to the cloud
-saveLocal = True
-sendToCloud = False
+saveLocal = False
+sendToCloud = True
 
 #Settings for the mqtt client
 mqttSettings = dict(
-    server      = '127.0.0.1',
-    port        = 12000,
+    #Change this to something that identifies your Client
     clientID    = 'TestClient',
-    controlTopic    = 'yay/super/topic',
-    publishTopic    = 'yay/geiles/topic',
+
+    #Don't change this
+    server      = 'realtime.ngi.ibm.com',
+    port        = 1883,
+    publishTopic    = '/org/dutchcourage/poseidon/client/sensor',
 )
 
 # Location information for the GrovePi station
-# Possible display on a map?
+# Change these values!
 location = dict(
-    lat         = 48.7833,
-    long        = 9.1833,
+    latitude         = 48.7833,
+    longitude        = 9.1833,
 )
 
 # Interval in which values should be stored or send
-updateInterval = 15
+# Don't set this under 30
+updateInterval = 30
 
 # Read the barometer values
 def readBarometerSensor():
@@ -90,6 +94,8 @@ def readSensors():
 def on_connect(client, userdata, flags, rc):
     if rc < 0:
         print "Connection failed. RC: {}".format(rc)
+    else:
+        print "Connected successfully"
 
 def on_publish(client, userdata, mid):
     print "Message {} published.".format(mid)
@@ -102,6 +108,7 @@ def intitMQTT():
     mqttClient.on_publish = _on_publish
 
     mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
+    mqttClient.loop()
 
 #Init everything needed
 def init():
@@ -121,6 +128,7 @@ while True:
     if SaveLocal == True :
         sqliteClient.addValues(sensorValues)
     if sendToCloud == True:
+        sensorValues["clientID"] = mqttSettings["clientID"]
         sensorValues.update(location)
         mqttClient.publish(mqttSettings['publishTopic'], json.dumps(sensorValues))
         mqttClient.loop()
