@@ -16,7 +16,7 @@ sendToCloud = True
 #Settings for the mqtt client
 mqttSettings = dict(
     #Change this to something that identifies your Client
-    clientID    = 'TheGruSensor',
+    clientID    = 'DefaultClientName',
 
     #Don't change this
     server      = 'realtime.ngi.ibm.com',
@@ -27,8 +27,8 @@ mqttSettings = dict(
 # Location information for the GrovePi station
 # Change these values!
 location = dict(
-    latitude         = 48.7833,
-    longitude        = 9.1833,
+    latitude         = 0,
+    longitude        = 0,
 )
 
 # Interval in which values should be stored or send
