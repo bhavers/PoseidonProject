@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 import time, datetime
 import json
 import grove_barometer_lib
+import config
 from sqliteClient import SQLiteClient
 
 ##########################
@@ -25,41 +26,9 @@ from sqliteClient import SQLiteClient
 
 #TODO:
 # Add functions for digital and I2C sensors 
+# If connection lost retry and send bulk information since last send
 
 sensorValues = dict()
-
-# Format:
-# sensorName = Pin
-# If not there set it to -1 to ignore it
-analogSensors = dict(
-    moisture = 0,
-)
-
-#Switch between local storage and sending to the cloud
-saveLocal = True
-sendToCloud = True
-
-#Settings for the mqtt client
-mqttSettings = dict(
-    #Change this to something that identifies your Client
-    clientID    = 'TheGruSensor',
-
-    #Don't change this
-    server      = 'realtime.ngi.ibm.com',
-    port        = 1883,
-    publishTopic    = '/org/dutchcourage/poseidon/client/sensor',
-)
-
-# Location information for the GrovePi station
-# Change these values!
-location = dict(
-    latitude         = 48.7833,
-    longitude        = 9.1833,
-)
-
-# Interval in which values should be stored or send
-# Don't set this under 30
-updateInterval = 60
 
 # Read the barometer values
 def readBarometerSensor():
@@ -72,15 +41,15 @@ def readBarometerSensor():
 
 #Register all analog ensors at the GrovePI
 def initAnalogSensors():
-    for sensor in analogSensors:
-        pin = analogSensors[sensor]
+    for sensor in config.analogSensors:
+        pin = config.analogSensors[sensor]
         if pin >= 0:
             grovepi.pinMode(pin,"Input")
 
 #Read all analog sensors 
 def readAnalogSensors():
-    for sensor in analogSensors:
-        pin = analogSensors[sensor]
+    for sensor in config.analogSensors:
+        pin = config.analogSensors[sensor]
         if pin >= 0:
             sensorValues[sensor] = grovepi.analogRead(pin)
 
@@ -92,7 +61,7 @@ def readSensors():
 
 ## MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
-    if rc > 0:
+    if rc != 0:
         print "Connection failed. RC: {}".format(rc)
     else:
         print "Connected successfully"
@@ -100,32 +69,36 @@ def on_connect(client, userdata, flags, rc):
 def on_publish(client, userdata, mid):
     print "Message {} published.".format(mid)
 
+def on_disconnect(client, userdata, rc):
+    if rc != 0:
+        print "Client disconnected unexpectedly, trying to reconnect."
+        mqttClient.reconnect()
 
 #For now:
 #Init the sensors
 initAnalogSensors()
 barometerSensor = grove_barometer_lib.barometer()
 
-if saveLocal == True:
+if config.saveLocal == True:
     sqliteClient = SQLiteClient()
-if sendToCloud == True:
-    mqttClient = mqtt.Client(mqttSettings["clientID"])
+if config.sendToCloud == True:
+    mqttClient = mqtt.Client(config.mqttSettings["clientID"])
     mqttClient.on_connect = on_connect
     mqttClient.on_publish = on_publish
-    mqttClient.connect(mqttSettings["server"], mqttSettings["port"])
-    mqttClient.loop()
-    time.sleep(15)
+    mqttClient.on_disconnect = on_disconnect
+    mqttClient.loop_start()
+    mqttClient.connect(config.mqttSettings["server"], config.mqttSettings["port"])
+
 
 
 while True:
     readSensors()
-    if saveLocal == True :
+    if config.saveLocal == True :
         sqliteClient.addValues(sensorValues)
-    if sendToCloud == True:
-        sensorValues["clientID"] = mqttSettings["clientID"]
-        sensorValues.update(location)
-        mqttClient.publish(mqttSettings['publishTopic'], json.dumps(sensorValues))
-        mqttClient.loop()
+    if config.sendToCloud == True:
+        sensorValues["clientID"] = config.mqttSettings["clientID"]
+        sensorValues.update(config.location)
+        mqttClient.publish(config.mqttSettings['publishTopic'], json.dumps(sensorValues))
     print sensorValues
     sensorValues = dict()
-    time.sleep(updateInterval * 60)
+    time.sleep(config.updateInterval * 60)
