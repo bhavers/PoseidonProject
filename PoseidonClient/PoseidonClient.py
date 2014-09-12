@@ -4,7 +4,12 @@ import time, datetime
 import json
 import grove_barometer_lib
 import config
+import sys
 from sqliteClient import SQLiteClient
+
+
+sys.stdout = open('poseidon.log', 'w', 1)
+
 
 ##########################
 # Needed python libaries:#
