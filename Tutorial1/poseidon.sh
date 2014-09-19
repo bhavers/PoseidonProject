@@ -21,7 +21,7 @@ case "$1" in
     echo "Starting PoseidonClient"
     # run 
     sleep 10
-    cd /home/pi/PoseidonPi/PoseidonClient/
+    cd /home/pi/PoseidonProject/Tutorial1/
     sudo python PoseidonClient.py &
     ;;
   stop)
