@@ -19,6 +19,11 @@ class SQLiteClient:
         self.cursor.execute(query)
         return self.cursor.fetchone()
 
+    def getValuesAfter(self, lastMeasurementTime):
+        query = "Select * From SensorValues Where datetime(timestamp) >= datetime(?)"
+        self.cursor.execute(query, lastMeasurementTime)
+        return self.cursor.fetchall
+
     def _createTable(self):
         self.cursor.execute(
             "CREATE TABLE IF NOT EXISTS SensorValues(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
