@@ -64,14 +64,8 @@ def readSensors():
     readBarometerSensor()
     sensorValues['timestamp'],lastMeasurementTime = datetime.datetime.utcnow().isoformat()
 
-## MQTT Callbacks
-def on_connect(client, userdata, flags, rc):
-    if rc != 0:
-        print "Connection failed. RC: {}".format(rc)
-    else:
-        print "Connected successfully"
-
 def processData():
+    print sensorValues
     if config.saveLocal == True :
         sqliteClient.addValues(sensorValues)
     if config.sendToCloud == True:
@@ -86,6 +80,13 @@ def sendBulkData():
         sensorValues = valueSet
         processData()
     hasDisconnected = False
+
+## MQTT Callbacks
+def on_connect(client, userdata, flags, rc):
+    if rc != 0:
+        print "Connection failed. RC: {}".format(rc)
+    else:
+        print "Connected successfully"
 
 def on_publish(client, userdata, mid):
     print "Message {} published.".format(mid)
@@ -118,7 +119,6 @@ if config.sendToCloud == True:
 
 while True:
     readSensors()
-    print sensorValues
     processData()
     if config.sendAfterReconnect == True and hasDisconnected == True:
         sendBulkData()
