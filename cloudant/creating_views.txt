@@ -1,0 +1,97 @@
+The goal of this document is to show how you can make the sensor readings in the Poseidon Cloudant database available in a format which can be consumed by a client. More specifically, we want data to be available in such a way, that it can be used by the client app to create a chart showing the last x days worth of readings for temperature, moisture and pressure values for a given sensor.
+
+Every sensor reading which is stored in the database has the following format:
+
+{"_id":"f15b90c35ac432034b7d08d628f204f9","_rev":"2-9d58792b0ad4e39116572ac811a2d509","temperature":21.74,"timestamp":"2014-09-11T20:49:03.950070",
+"altitude":167703.6,"clientID":"BramPlantSensor",
+"pressure":1021.52,"longitude":4.999564,"moisture":699,"latitude":52.167191}
+
+By default, all readings are sorted by their id ("_id"). 
+Using Futon, we can consult the documents: https://cloudant.com/futon/database.html?6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix%2Fposeidonsensors/_all_docs
+
+The first thing we have to do, is create a new view in Cloudant which sorts the data using a combined key of sensor name and timestamp. 
+This will allow us to do a range lookup for a given sensor and time range. Views in Cloudant use the map reduce concept (see http://docs.couchdb.org/en/latest/couchapp/views/index.html for more info) to build the view index. 
+
+Let's create a new view named "history" which uses the following map function:
+
+function(doc) { 
+  if(doc.clientID && doc.timestamp) {
+	sensor_values = [0, 0, 0];
+	if (doc.temperature) {
+		sensor_values[0] = doc.temperature;
+	}
+	if (doc.moisture) {
+		sensor_values[1] = doc.moisture;
+	}
+	if (doc.pressure) {
+		sensor_values[2] = doc.pressure;
+	}	
+	emit([doc.clientID, doc.timestamp], sensor_values);
+  }
+}
+
+This function will create a view where each row will have a [name, timestamp] key and an array of sensor readings as the corresponding value.
+
+To create the view, we'll store the view in a design object in a json file called sensors_design.json and upload it via curl:
+
+{
+  "_id" : "_design/sensors",
+  "views" : {
+    "history" : {	  
+      "map" : "function(doc) {  if(doc.clientID && doc.timestamp) {sensor_values = [0, 0, 0];if (doc.temperature) {sensor_values[0] = doc.temperature;}if (doc.moisture) {sensor_values[1] = doc.moisture;}if (doc.pressure) {sensor_values[2] = doc.pressure;}emit([doc.clientID, doc.timestamp], sensor_values); }}"
+    }
+  }
+}
+
+
+curl -X PUT https://6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix:7b02f5c3950d8318f43749c11ebdddfe1407872d6d2936cf171a5baf9f025d28@6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix.cloudant.com/poseidonsensors/_design/sensors --data-binary @sensors_design.json
+
+Cloudant will respond with the result and revision number of the design document created:
+{"ok":true,"id":"_design/sensors","rev":"6-fecfe84d7fa484bc1f75305306cd9eee"}
+
+Our view is now ready and we can consult it using the url https://6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix.cloudant.com/poseidonsensors/_design/sensors/_view/history
+
+The view returns the document id, key and value:
+
+{"total_rows":859,"offset":0,"rows":[
+{"id":"f15b90c35ac432034b7d08d628f204f9","key":["BramPlantSensor","2014-09-11T20:49:03.950070"],"value":[21.74,699,1021.52]},
+{"id":"61016c8b558e139f7f66782f412b4c40","key":["BramPlantSensor","2014-09-11T20:50:00.770086"],"value":[21.71,703,1021.55]},
+{"id":"c6584b2f6c26d629dc81d5e63d5298f4","key":["BramPlantSensor","2014-09-11T20:59:02.63522"],"value":[22.74,222,1021.62]},
+{"id":"61016c8b558e139f7f66782f4153b663","key":["BramPlantSensor","2014-09-11T21:20:02.464378"],"value":[21.91,700,1021.7]}]}
+
+
+To limit our results now to a specific sensor and time range, we can use query parameters, e.g.:
+
+https://6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix.cloudant.com/poseidonsensors/_design/sensors/_view/history?startkey=["BramPlantSensor", "2014-09-15T00:00:00.000000"]&endkey=["BramPlantSensor", "2014-09-17T00:00:00.000000"]
+
+Although this view returns all the data we need to create a chart, we can make it a bit more compact by transforming it into a CSV format. 
+This can be done using couchdb lists (http://guide.couchdb.org/draft/transforming.html)
+
+function(head, req){ 
+	start({ 'headers': { 'Content-Type': 'text/csv' } }); 
+	send('timestamp,temperature,moisture,pressure\\u000A'); 
+	while(row = getRow()) { 
+		send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000A'); 
+	} 
+}
+
+We add this list function to our design file and upload it again. Note that we now have to provide the revision number inside our design file, so that Cloudant knows we are updating the previous version.
+
+{
+  "_id" : "_design/sensors",
+  "_rev": "6-fecfe84d7fa484bc1f75305306cd9eee",
+  "views" : {
+    "history" : {	  
+      "map" : "function(doc) {  if(doc.clientID && doc.timestamp) {sensor_values = [0, 0, 0];if (doc.temperature) {sensor_values[0] = doc.temperature;}if (doc.moisture) {sensor_values[1] = doc.moisture;}if (doc.pressure) {sensor_values[2] = doc.pressure;}emit([doc.clientID, doc.timestamp], sensor_values); }}"
+    }
+  },
+  "lists" : {
+	"csv" : "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } }); send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000A'); } }"
+  }
+}
+
+That's it. We can now access the data in a compact CSV format for a specific sensor and time range using the url:
+
+https://6b8e4c02-1457-4a86-b130-e1ae4ac44357-bluemix.cloudant.com/poseidonsensors/_design/sensors/_list/csv/history?startkey=[%22BramPlantSensor%22,%20%222014-09-15T00:00:00.000000%22]&endkey=[%22BramPlantSensor%22,%20%222014-09-17T00:00:00.000000%22]
+
+

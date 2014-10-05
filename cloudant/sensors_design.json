@@ -1,0 +1,12 @@
+{
+  "_id" : "_design/sensors",
+  "_rev": "27-fea665cc86de2c1f01de530e774b0deb",
+  "views" : {
+    "history" : {	  
+      "map" : "function(doc) {  if(doc.clientID && doc.timestamp) {sensor_values = [0, 0, 0];if (doc.temperature) {sensor_values[0] = doc.temperature;}if (doc.moisture) {sensor_values[1] = doc.moisture;}if (doc.pressure) {sensor_values[2] = doc.pressure;}emit([doc.clientID, doc.timestamp], sensor_values); }}"
+    }
+  },
+  "lists" : {
+	"csv" : "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } }); send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000A'); } }"
+  }
+}
