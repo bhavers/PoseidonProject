@@ -1,0 +1,8 @@
+PoseidonProject 0.2, 2014-10-12
+----------------------
+- Various improvement to Tutorial 1, code is ready.
+- Included code for Tutorial 2.
+
+PoseidonProject 0.1, 2014-08-01
+- Initial commit for Tutorial 1 and solution architecture.
+-----------------------
