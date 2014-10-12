@@ -1,3 +1,6 @@
+# PoseidonProject
+
+##Introduction
 Poseidon aims to reduce the overuse of fresh water in the world.
 The objective of the first iteration of Poseidon is to:
 - Develop a water monitoring solution for educational purposes.
@@ -8,6 +11,7 @@ The project uses a Raspberry Pi with soil moisture and barometer sensors. The da
 Bluemix, a cloud platform (Platform as a Service), for process by application.
 The code in this repository provides the Python script that will be running on the Pi.
 
+##Usage
 Important files:
 - PoseidonClient/config.py: your configuration settings, add to .gitignore
 - PoseidonClient/PoseidonClient.py: the main script to execute
@@ -15,5 +19,10 @@ Important files:
 
 See the files for instructions.
 
+##License 
+The code is licensed under the Apache v2 open source license, see License.txt. 
 Poseidon is a project of the Dutch Courage foundation, http://dutchcourage.org/
 
+## External dependencies
+The code is dependent on the following external libraries:
+- tbd...
