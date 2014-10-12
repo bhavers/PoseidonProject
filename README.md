@@ -13,9 +13,9 @@ The code in this repository provides the Python script that will be running on t
 
 ##Usage
 Important files:
-- PoseidonClient/config.py: your configuration settings, add to .gitignore
-- PoseidonClient/PoseidonClient.py: the main script to execute
-- PoseidonClient/poseidon.sh: script for starting/stopping PoseidonClient.py
+- Tutorial1/config.py: your configuration settings, add to .gitignore
+- Tutorial1/PoseidonClient.py: the main script to execute
+- Tutorial1/poseidon.sh: script for starting/stopping PoseidonClient.py
 
 See the files for instructions.
 
