@@ -1,6 +1,6 @@
 applications:
 - disk_quota: 1024M
-  host: PoseidonProject
+  host: poseidon
   name: PoseidonProject
   command: npm start
   path: ./node-app/
