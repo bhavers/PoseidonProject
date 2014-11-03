@@ -12,17 +12,8 @@ Bluemix, a cloud platform (Platform as a Service), for process by application.
 The code in this repository provides the Python script that will be running on the Pi.
 
 ##Usage
-Important files:
-- Tutorial1/config.py: your configuration settings, add to .gitignore
-- Tutorial1/PoseidonClient.py: the main script to execute
-- Tutorial1/poseidon.sh: script for starting/stopping PoseidonClient.py
-
-See the files for instructions.
+See the README.md files in the Tutorialx folders for instructions.
 
 ##License 
 The code is licensed under the Apache v2 open source license, see License.txt. 
 Poseidon is a project of the Dutch Courage foundation, http://dutchcourage.org/
-
-## External dependencies
-The code is dependent on the following external libraries:
-- tbd...
