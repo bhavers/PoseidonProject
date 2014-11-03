@@ -3,7 +3,7 @@ The goal of this document is to show how you can make the sensor readings in the
 Every sensor reading which is stored in the database has the following format:
 
 {"_id":"f15b90c35ac432034b7d08d628f204f9","_rev":"2-9d58792b0ad4e39116572ac811a2d509","temperature":21.74,"timestamp":"2014-09-11T20:49:03.950070",
-"altitude":167703.6,"clientID":"BramPlantSensor",
+"altitude":167703.6,"clientID":"ExamplePlantSensor",
 "pressure":1021.52,"longitude":4.999564,"moisture":699,"latitude":52.167191}
 
 By default, all readings are sorted by their id ("_id"). 
