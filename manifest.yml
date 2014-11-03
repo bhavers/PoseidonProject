@@ -1,9 +1,0 @@
-applications:
-- disk_quota: 1024M
-  host: poseidon
-  name: PoseidonProject
-  command: npm start
-  path: ./node-app/
-  domain: mybluemix.net
-  instances: 1
-  memory: 128M
