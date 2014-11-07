@@ -7,7 +7,7 @@
 # - Change permissions: sudo chmod 755 /etc/init.d/poseidon.sh
 # - Test starting script: sudo /etc/init.d/poseidon.sh start
 # - Test script running: ps -ef |grep Poseidon     (you should see 2 entries)
-# - Test script logging:  tail /home/pi/PoseidonProject/Tutorial1/poseidon.log
+# - Test script logging:  tail /home/pi/PoseidonProject/Tutorial1/PoseidonClient/poseidon.log
 # - Test stopping script: sudo /etc/init.d/poseidon.sh stop
 # - Test script stopped: ps -ef |grep Poseidon     (entries seen above should be gone)
 # - Activate script for boot: sudo update-rc.d poseidon.sh defaults
@@ -21,7 +21,7 @@ case "$1" in
     echo "Starting PoseidonClient"
     # run 
     sleep 10
-    cd /home/pi/PoseidonProject/Tutorial1/
+    cd /home/pi/PoseidonProject/Tutorial1/PoseidonClient/
     sudo python PoseidonClient.py &
     ;;
   stop)

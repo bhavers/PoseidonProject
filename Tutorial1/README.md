@@ -17,5 +17,6 @@ The code is licensed under the Apache v2 open source license, see License.txt.
 Poseidon is a project of the Dutch Courage foundation, http://dutchcourage.org/
 
 ## External dependencies
-The code is dependent on the following external libraries:
-- tbd...
+- Setup GrovePi by cloning the git repository: https://github.com/DexterInd/GrovePi 
+- Execute install.sh (as root) from GrovePi git foldder /Script/
+- Copy grovepi.py and grove_barometer_lib.py from GrovePi fit folder Script/Python to PoseidonClient
