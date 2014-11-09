@@ -1,0 +1,5 @@
+# All contributors - name, organisation and date of first contribution to this project
+Bram Havers, IBM Netherlands, 1/10/2014
+Kai Weller, IBM Germany, 1/10/2014
+Bill Hymas, IBM Germany, 1/10/2014
+Davy Vanherbergen, IBM Belgium, 1/10/2014
