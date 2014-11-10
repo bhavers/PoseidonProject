@@ -1,5 +1,5 @@
 Copy the the contents of the json file to clipboard and import in Nodered.
-The code creates a proxy for Cloudant. You need to add the cloudant user/pwd on the 'cloudant get' node.
+The code creates a proxy for Cloudant. You need to add the cloudant user/pwd on the 'cloudant get' node and the cloudant hostname on the function node.
 This will listen to /<sensorname>/history urls. By default it will return 14 days of history or alternatively you can limit the size by specifying a days parameter.
 
 E.g. 
