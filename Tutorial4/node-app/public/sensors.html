@@ -1,0 +1,22 @@
+<!doctype html>
+<html ng-app="sensorsApp">
+	<head>
+		<meta name="viewport" content="initial-scale=1" />
+		<link rel="stylesheet" type="text/css" href="css/sensors.css" />
+  		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js"></script>
+  		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular-resource.js"></script>
+  		<script src="js/app.js" ></script>
+		<title>Poseidon Sensors</title>
+	</head>
+	<body ng-controller="sensorsController">
+	<h2>Poseidon Sensors</h2>
+
+	<ul>
+		<li ng-repeat="sensor in sensors">
+			<a href="/sensor.html?name={{sensor.name}}">{{sensor.name}}
+		</li>
+	</ul>
+
+
+	</body>
+</html>

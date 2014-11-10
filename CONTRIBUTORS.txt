@@ -1,5 +1,13 @@
 # All contributors - name, organisation and date of first contribution to this project
-Bram Havers, IBM Netherlands, 1/10/2014
-Kai Weller, IBM Germany, 1/10/2014
-Bill Hymas, IBM Germany, 1/10/2014
-Davy Vanherbergen, IBM Belgium, 1/10/2014
+# Add your name to this list as part of tutorial 3.
+- Bram Havers, IBM Netherlands, 1/10/2014 - welcome
+- Kai Weller, IBM Germany, 1/10/2014
+- Bill Hymas, IBM Germany, 1/10/2014
+- Davy Vanherbergen, IBM Belgium, 1/10/2014
+
+
+
+# A welcome message to the new contributor
+# Do not add anything to this list. The PoseidonProject maintainers will do this, so that you
+# can see how you merge changes back into your forked repository.
+- Welcome Bram. 

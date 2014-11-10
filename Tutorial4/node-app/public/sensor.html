@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <head>
-	<link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+	<meta name="viewport" content="initial-scale=1" />
+	<link rel="stylesheet" type="text/css" href="css/sensors.css" />
 </head>
 <body>
 <h2 id="title" />
-<script src="javascripts/d3.v3.js"></script>
+<script src="js/d3.v3.js"></script>
 <script>
+
+var viewPortWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+// default graph width is 960 
+var graphWidth = 960;
+// include 2 weeds of data by default 
+var daysToInclude = 14;
+
+if (viewPortWidth < graphWidth) {
+	// reduce graph width and limit data to 3 days
+	graphWidth = viewPortWidth;
+	if (viewPortWidth < 400) {
+		daysToInclude = 3;
+	} else {
+		daysToInclude = 7;
+	}
+}
 
 var sensorName = location.search.substr(1).split('=')[1];
 document.getElementById('title').innerText = sensorName;
 
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = 980 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var margin = {top: 20, right: 40, bottom: 30, left: 50},
+    width = graphWidth - margin.left - margin.right,
+    height = (graphWidth/2) - margin.top - margin.bottom;
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -58,12 +75,11 @@ var lineMoisture = 	d3.svg.line()
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-	.attr("class", "mygraph")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	
-d3.csv("/sensors/"+ sensorName + "/history", function(error, data) {
+d3.csv("http://poseidon.mybluemix.net/sensors/"+ sensorName + "/history?days=" + daysToInclude, function(error, data) {
   data.forEach(function(d) {
     d.date = new Date(d.timestamp);
 	d.temperature = parseFloat(d.temperature);
