@@ -76,8 +76,26 @@ def readAnalogSensors():
 #Read all sensor values
 def readSensors():
     readAnalogSensors()
-    readBarometerSensor()
-    sensorValues['timestamp'] = datetime.datetime.utcnow().isoformat()
+    if config.barometerSensor = True:
+        readBarometerSensor()
+    sensorValues['timestamp'],lastMeasurementTime = datetime.datetime.utcnow().isoformat()
+
+def processData():
+    print sensorValues
+    if config.saveLocal == True :
+        sqliteClient.addValues(sensorValues)
+    if config.sendToCloud == True:
+        sensorValues["clientID"] = config.mqttSettings["clientID"]
+        sensorValues.update(config.location)
+        mqttClient.publish(config.mqttSettings['publishTopic'], json.dumps(sensorValues))
+    sensorValues = dict()
+
+
+def sendBulkData():
+    for valueSet in sqliteClient.getValuesAfter(lastMeasurementTime):
+        sensorValues = valueSet
+        processData()
+    hasDisconnected = False
 
 ## MQTT Callbacks
 def on_connect(client, userdata, flags, rc):
@@ -92,13 +110,18 @@ def on_publish(client, userdata, mid):
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print "Client disconnected unexpectedly, trying to reconnect."
+        hasDisconnected = True
         mqttClient.reconnect()
 
-#For now:
 #Init the sensors
 initAnalogSensors()
-barometerSensor = grove_barometer_lib.barometer()
+if barometerSensor = True :
+    barometerSensor = grove_barometer_lib.barometer()
 
+lastMeasurementTime = 0
+
+if config.sendAfterReconnect == True:
+    hasDisconnected = False
 if config.saveLocal == True:
     sqliteClient = SQLiteClient()
 if config.sendToCloud == True:
@@ -113,12 +136,7 @@ if config.sendToCloud == True:
 
 while True:
     readSensors()
-    if config.saveLocal == True :
-        sqliteClient.addValues(sensorValues)
-    if config.sendToCloud == True:
-        sensorValues["clientID"] = config.mqttSettings["clientID"]
-        sensorValues.update(config.location)
-        mqttClient.publish(config.mqttSettings['publishTopic'], json.dumps(sensorValues))
-    print sensorValues
-    sensorValues = dict()
+    processData()
+    if config.sendAfterReconnect == True and hasDisconnected == True:
+        sendBulkData()
     time.sleep(config.updateInterval * 60)

@@ -1,3 +1,6 @@
+<<<<<<< HEAD:Tutorial1/config.py
+# Poseidon Config file
+=======
 # Copyright Dutch Courage Foundation 2014  
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +17,7 @@
 # 
 # 
 # Description: Poseidon Config file
+>>>>>>> master:Tutorial1/PoseidonClient/config.py
 
 # Format:
 # sensorName = Pin
@@ -21,10 +25,14 @@
 analogSensors = dict(
     moisture = 0,
 )
+baromterSensor = True
 
-#Switch between local storage and sending to the cloud
+#Save sensor data locally?
 saveLocal = True
+#Send sensor data to the MQTTBroker?
 sendToCloud = True
+#Send the collected sensor data to the broker after a reconnect?
+sendAfterReconnect = True
 
 #Settings for the mqtt client
 mqttSettings = dict(
