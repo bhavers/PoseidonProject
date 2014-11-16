@@ -76,7 +76,7 @@ def readAnalogSensors():
 #Read all sensor values
 def readSensors():
     readAnalogSensors()
-    if config.barometerSensor = True:
+    if config.barometerSensor == True:
         readBarometerSensor()
     sensorValues['timestamp'],lastMeasurementTime = datetime.datetime.utcnow().isoformat()
 
