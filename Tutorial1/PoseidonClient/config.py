@@ -22,7 +22,7 @@
 analogSensors = dict(
     moisture = 0,
 )
-baromterSensor = True
+barometerSensor = True
 
 #Save sensor data locally?
 saveLocal = True

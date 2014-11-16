@@ -48,8 +48,6 @@ sys.stdout = open('poseidon.log', 'w', 1)
 # Add functions for digital and I2C sensors 
 # If connection lost retry and send bulk information since last send
 
-sensorValues = dict()
-
 # Read the barometer values
 def readBarometerSensor():
     if barometerSensor.isAvailable():
@@ -78,10 +76,11 @@ def readSensors():
     readAnalogSensors()
     if config.barometerSensor == True:
         readBarometerSensor()
-    sensorValues['timestamp'],lastMeasurementTime = datetime.datetime.utcnow().isoformat()
+    sensorValues['timestamp'] = datetime.datetime.utcnow().isoformat()
+    lastMeasurementTime = datetime.datetime.utcnow().isoformat()
 
 def processData():
-    print sensorValues
+    global sensorValues
     if config.saveLocal == True :
         sqliteClient.addValues(sensorValues)
     if config.sendToCloud == True:
@@ -89,7 +88,6 @@ def processData():
         sensorValues.update(config.location)
         mqttClient.publish(config.mqttSettings['publishTopic'], json.dumps(sensorValues))
     sensorValues = dict()
-
 
 def sendBulkData():
     for valueSet in sqliteClient.getValuesAfter(lastMeasurementTime):
@@ -114,8 +112,9 @@ def on_disconnect(client, userdata, rc):
         mqttClient.reconnect()
 
 #Init the sensors
+sensorValues = dict()
 initAnalogSensors()
-if barometerSensor == True :
+if config.barometerSensor == True :
     barometerSensor = grove_barometer_lib.barometer()
 
 lastMeasurementTime = 0
@@ -136,6 +135,7 @@ if config.sendToCloud == True:
 
 while True:
     readSensors()
+    print sensorValues
     processData()
     if config.sendAfterReconnect == True and hasDisconnected == True:
         sendBulkData()
