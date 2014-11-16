@@ -1,6 +1,4 @@
-<<<<<<< HEAD:Tutorial1/config.py
-# Poseidon Config file
-=======
+
 # Copyright Dutch Courage Foundation 2014  
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +15,6 @@
 # 
 # 
 # Description: Poseidon Config file
->>>>>>> master:Tutorial1/PoseidonClient/config.py
 
 # Format:
 # sensorName = Pin

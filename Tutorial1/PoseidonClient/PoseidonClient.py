@@ -115,7 +115,7 @@ def on_disconnect(client, userdata, rc):
 
 #Init the sensors
 initAnalogSensors()
-if barometerSensor = True :
+if barometerSensor == True :
     barometerSensor = grove_barometer_lib.barometer()
 
 lastMeasurementTime = 0
