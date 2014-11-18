@@ -21,6 +21,10 @@ class SQLiteClient:
 
     def addValues(self, values):
         query = "Insert Into SensorValues (timestamp, moisture, pressure, altitude, temperature) Values (?, ?, ?, ?, ?)" 
+        if not 'temperature' in values:
+            values["temperature"] = None
+            values["pressure"] = None
+            values["altitude"] = None
         self.cursor.execute(query, values.values())
         self.connection.commit()
 
