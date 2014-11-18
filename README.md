@@ -14,7 +14,7 @@ The code in this repository provides the Python script that will be running on t
 ##Usage
 See the README.md files in the Tutorialx folders for instructions.
 
-##Contributions
+##Contributing
 Please fork or clone this repository if you want to improve code and contribute to
 the project. To notify us of your improvements go to Track & Plan and create
 a work item with tag #patch and refer to your repository and the modified files.
@@ -25,3 +25,7 @@ thoughts at the forum.
 ##License 
 The code is licensed under the Apache v2 open source license, see License.txt. 
 Poseidon is a project of the Dutch Courage foundation, http://dutchcourage.org/
+
+##Dependencies
+Tutorial1 PoseidonClient depends on grove_barometer_lib.py and grovepi.py libraries 
+available from https://github.com/DexterInd/GrovePi
