@@ -1,0 +1,55 @@
+body {
+  font: 0.7em sans-serif;
+  background-color: #3b4b54;
+}
+h2 {
+	color: white;
+	font-size: 2em;
+	padding-left: 2em;
+}
+a {
+	color: grey;
+	font-size: 1.5em;
+}
+li {	
+	color: grey;
+	margin-left: 2em;
+	padding: 0.5em;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: lightgrey;
+}
+
+.lineTemp {
+  fill: none;
+  stroke: orange;
+  stroke-width: 2px;
+}
+
+.linePressure {
+  fill: none;
+  stroke: grey;
+  stroke-width: 2px;
+}
+
+.lineMoisture {
+  fill: none;
+  stroke: #00AED1;
+  stroke-width: 2px;
+}
+
+.axis tick, .axis text {
+  fill: lightgrey;
+}
+
+.y0Axis text {
+  fill: orange;
+}
+.y1Axis text {
+  fill: grey;
+}
+.y2Axis text {
+  fill: #00AED1;
+}
