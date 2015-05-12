@@ -1,0 +1,4 @@
+/*TUTORIAL 4*/
+/*Buildup of the Valve*/
+/*Controlling the valve, using a treshold for drought (original code)* 
+
