@@ -1,12 +1,17 @@
 {
-  "_id" : "_design/sensors",
-  "_rev": "27-fea665cc86de2c1f01de530e774b0deb",
-  "views" : {
-    "history" : {	  
-      "map" : "function(doc) {  if(doc.clientID && doc.timestamp) {sensor_values = [0, 0, 0];if (doc.temperature) {sensor_values[0] = doc.temperature;}if (doc.moisture) {sensor_values[1] = doc.moisture;}if (doc.pressure) {sensor_values[2] = doc.pressure;}emit([doc.clientID, doc.timestamp], sensor_values); }}"
+  "_id": "_design/sensors",
+  "_rev": "25-4af9a27774550ef7c70772ebe18cdc0e",
+  "views": {
+    "history": {
+      "map": "function(doc) { \n     if(doc.clientID && doc.timestamp) {\n      sensor_values = [0, 0, 0];\n      if (doc.temperature) {\n       sensor_values[0] = doc.temperature;\n     }\n     if (doc.moisture) {\n       sensor_values[1] = doc.moisture;\n     }\n     if (doc.pressure) {\n       sensor_values[2] = doc.pressure;\n     } \n     emit([doc.clientID, doc.timestamp], sensor_values);\n     }\n   }"
+    },
+    "summary": {
+      "map": "   function(doc) { \n     if(doc.clientID) {\n      emit(doc.clientID, null);\n     } \n   }",
+      "reduce": "_count"
     }
   },
-  "lists" : {
-	"csv" : "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } }); send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000A'); } }"
+  "lists": {
+    "csv": "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } });send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000Av); } }",
+    "json": "function (head, req) { provides('json', function() {  var results = []; while (row = getRow()) {  results.push({ name: row.key });}send(JSON.stringify(results));});}"
   }
 }
