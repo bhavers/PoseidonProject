@@ -11,7 +11,7 @@
     }
   },
   "lists": {
-    "csv": "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } });send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000Av); } }",
+    "csv": "function(head, req){ start({ 'headers': { 'Content-Type': 'text/csv' } });send('timestamp,temperature,moisture,pressure\\u000A'); while(row = getRow()){ send(row.key[1] + ',' + row.value[0] + ',' + row.value[1] + ',' + row.value[2] + '\\u000A'); } }",
     "json": "function (head, req) { provides('json', function() {  var results = []; while (row = getRow()) {  results.push({ name: row.key });}send(JSON.stringify(results));});}"
   }
 }
